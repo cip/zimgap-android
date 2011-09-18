@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+
+<html>
+
+     <head>
+
+          <title>PhoneGap</title>
+
+     </head>
+
+     <body>
+
+          <!-- Button -->
+
+          <input disabled id="list-sdcard" type="button" value="List SDCard Contents"  />
+
+          <hr>
+
+ 
+
+          <!-- Place Holder for placing the SD Card Listing -->
+
+          <div id="result"></div>
+
+ 
+
+          <hr>
+
+ 
+
+          <script type="text/javascript" src="phonegap-1.0.0.js"></script>
+
+          <script type="text/javascript" src="directorylisting.js"></script>
+          <script type="text/javascript" >
+
+   document.addEventListener('deviceready', function() {
+
+   var btn = document.getElementById("list-sdcard");
+
+   btn.onclick = function() {
+
+    window.plugins.directoryListing.list(    "/sdcard",
+
+function(r){printResult(r)},
+
+function(e){console.log(e)}
+
+);
+
+    }
+
+    btn.disabled=false;
+
+  }, true);
+
+ 
+
+ 
+
+ function printResult(fileInfo){
+
+  var innerHtmlText=getHtml(fileInfo);    
+
+  document.getElementById("result").innerHTML=innerHtmlText;
+
+ }
+
+ 
+
+ function getHtml(fileInfo){
+
+ var htmlText="<ul><li>"+fileInfo.filename;
+
+ if(fileInfo.children){
+
+ 
+
+ for(var index=0;index<fileInfo.children.length;index++){
+
+ htmlText=htmlText+getHtml(fileInfo.children[index]);
+
+ }
+
+ }
+
+ htmlText=htmlText+"</li></ul>";
+
+ return htmlText;
+
+ 
+
+ } 
+
+          </script>
+
+ 
+
+     </body>
+
+</html>
