@@ -27,9 +27,22 @@ DirectoryListing.prototype.list = function(directory,successCallback, failureCal
       [directory]);        //Passing list of args to the plugin
 
 };
- 
+
+DirectoryListing.prototype.zimtest = function(zimFileName, articleTitle,successCallback, failureCallback) {
+	return PhoneGap.exec(    successCallback,    //Success callback from the plugin
+
+	      failureCallback,     //Error callback from the plugin
+
+	      'DirectoryListPlugin',  //Tell PhoneGap to run "DirectoryListingPlugin" Plugin
+
+	      'zimtest',              //Tell plugin, which action we want to perform
+	      [zimFileName,articleTitle]);        //Passing list of args to the plugin
+
+	};
+
+
 PhoneGap.addConstructor(function() {
 
-                   PhoneGap.addPlugin("directoryListing", new DirectoryListing());
+                   PhoneGap.addPlugin("directoryListing", new DirectoryListing());                   
 
                });

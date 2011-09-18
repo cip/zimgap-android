@@ -3,13 +3,17 @@
  */
 package com.trial.phonegap.plugin.zim;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 
 import org.json.JSONArray;
 
 import org.json.JSONException;
 
 import org.json.JSONObject;
+import org.openzim.ZIMTypes.ZIMFile;
+import org.openzim.ZIMTypes.ZIMReader;
 
 import android.util.Log;
 
@@ -27,7 +31,7 @@ public class DirectoryListPlugin extends Plugin {
 	/** List Action */
 
 	public static final String ACTION_LIST="list";
-	public static final String ACTION_ZIMTEST="zim_test";
+	public static final String ACTION_ZIMTEST="zimtest";
 
 	/*
 
@@ -43,7 +47,7 @@ public class DirectoryListPlugin extends Plugin {
 
 	@Override
 	public PluginResult execute(String action, JSONArray data, String callbackId) {
-		Log.d("DirectoryListPlugin", "Plugin Called");
+		Log.d("zimgap", "Plugin Called");
 
 		PluginResult result = null;
 
@@ -55,14 +59,14 @@ public class DirectoryListPlugin extends Plugin {
 
 				JSONObject fileInfo = getDirectoryListing(new File(fileName));
 
-				Log.d("DirectoryListPlugin", "Returning "+ fileInfo.toString());
+				Log.d("zimgap", "Returning "+ fileInfo.toString());
 
 				result = new PluginResult(Status.OK, fileInfo);
 
 			} catch (JSONException jsonEx) {
 
-				Log.d("DirectoryListPlugin", "Got JSON Exception "+ jsonEx.getMessage());
-
+				Log.d("zimgap", "Got JSON Exception "+ jsonEx.getMessage());
+				
 				result = new PluginResult(Status.JSON_EXCEPTION);
 
 			}
@@ -80,7 +84,7 @@ public class DirectoryListPlugin extends Plugin {
 
 			}  catch (JSONException jsonEx) {
 
-				Log.d("DirectoryListPlugin", "Got JSON Exception "+ jsonEx.getMessage());
+				Log.d("zimgap", "Got JSON Exception "+ jsonEx.getMessage());
 
 				result = new PluginResult(Status.JSON_EXCEPTION);
 
@@ -92,39 +96,35 @@ public class DirectoryListPlugin extends Plugin {
 
 			result = new PluginResult(Status.INVALID_ACTION);
 
-			Log.d("DirectoryListPlugin", "Invalid action : "+action+" passed");
+			Log.d("zimgap", "Invalid action : "+action+" passed");
 
 		}
 
 		return result;
 	}
-	private JSONObject zimTest(String zimFileName, String articleTitle) {
+	private JSONObject zimTest(String zimFileName, String articleTitle) throws JSONException {
 		JSONObject articleData = new JSONObject();
-		
-		return articleData;
-		/*fileInfo.put("filename", file.getName());
+        File zimFile = new File(zimFileName);
+        Log.d("zimgap",""+zimFile.exists());
+        ZIMFile file = new ZIMFile(zimFileName);
+		// Associate the Zim File with a Reader
+		ZIMReader zReader = new ZIMReader(file);
 
-		fileInfo.put("isdir", file.isDirectory());/
+		try {
+			ByteArrayOutputStream articleDataByteArray = zReader.getArticleData(articleTitle,'A');
+			if (articleDataByteArray==null) {
+				Log.w("zimgap", "Article \""+articleTitle+"\" not found");
+			} else {
+				String articleText =articleDataByteArray.toString("utf-8");
+				articleData.put("articletext", articleText);
 
-		if (file.isDirectory()) {
-
-			JSONArray children = new JSONArray();
-
-			fileInfo.put("children", children);
-
-			if (null != file.listFiles()) {
-
-				for (File child : file.listFiles()) {
-
-					children.put(getDirectoryListing(child));
-
-				}
-
+				Log.d("zimgap","Article read successfully");
 			}
-
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
-		return fileInfo;*/
+		return articleData;		
 	}
 	/**
 
@@ -140,31 +140,29 @@ public class DirectoryListPlugin extends Plugin {
 	 */
 
 	private JSONObject getDirectoryListing(File file) throws JSONException {
-
+		//For now find zim files in root directory of sdcard only
 		JSONObject fileInfo = new JSONObject();
-
-		fileInfo.put("filename", file.getName());
-
-		fileInfo.put("isdir", file.isDirectory());
-
+	
 		if (file.isDirectory()) {
-
+			fileInfo.put("filename", file.getAbsolutePath());			
+			fileInfo.put("isdir", file.isDirectory());	
+			
 			JSONArray children = new JSONArray();
-
 			fileInfo.put("children", children);
-
 			if (null != file.listFiles()) {
-
 				for (File child : file.listFiles()) {
-
-					children.put(getDirectoryListing(child));
-
+					if (child.isFile()) {
+						if (child.getName().endsWith(".zim") || child.getName().endsWith(".zima")) {
+							JSONObject zimFileInfo = new JSONObject();							
+							Log.d("zimgap"," Found zimfile: "+child.getName());		        
+							zimFileInfo.put("filename", child.getAbsolutePath());			
+							zimFileInfo.put("isdir", child.isDirectory());
+							children.put(zimFileInfo);
+						}
+					}
 				}
-
 			}
-
 		}
-
 		return fileInfo;
 
 	}
