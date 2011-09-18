@@ -11,40 +11,40 @@
 <body>
 
 	<!-- Button -->
-	<input id="zimFileName" name="articleTitle" type="text" value="//sdcard/wikipedia-de.zim">	
-	<input id="articleTitle" name="articleTitle" type="text" value="Graz">	
+	<input id="zimFileName" name="articleTitle" type="text"
+		value="//sdcard/wikipedia-de.zim">
+	<!-- Doesn't work (appearantly not supported by android browser)   <input id="zimFileName" name="articleTitle" type="file"
+		value="//sdcard/wikipedia-de.zim">-->
+	
+	<input id="articleTitle" name="articleTitle" type="text" value="Graz">
 	<input disabled id="list-sdcard" type="button"
 		value="List SDCard Contents" />
 	<input disabled id="zimtest" type="button" value="zimtest" />
 	<hr>
 	<div id="status"></div>
-	<hr>	
+	<hr>
 
 	<!-- Place Holder for placing the SD Card Listing -->
 
 	<div id="result"></div>
 
 
-
-	<hr>
-
-
-
 	<script type="text/javascript" src="phonegap-1.0.0.js"></script>
 
 	<script type="text/javascript" src="directorylisting.js"></script>
 	<script type="text/javascript">
+		var startTime;
 		document.addEventListener('deviceready', function() {
 
 			var btn = document.getElementById("list-sdcard");
-	
+
 			btn.onclick = function() {
 				btn.disabled = true;
 				window.plugins.directoryListing.list("/sdcard",
 
 				function(r) {
 					btn.disabled = false;
-					printResult(r)					
+					printResult(r)
 				},
 
 				function(e) {
@@ -57,37 +57,46 @@
 			}
 
 			btn.disabled = false;
-			
+
 			var btn = document.getElementById("zimtest");
-			
-			btn.onclick = function() {
-				btn.disabled = true;
-				clearArticle();
-				showStatus("Loading article "+document.getElementById("articleTitle").value+" from file: "+document.getElementById("zimFileName").value);
-				window.plugins.directoryListing.zimtest(document.getElementById("zimFileName").value, 
-						document.getElementById("articleTitle").value, 
-						
-				function(r) {
-					btn.disabled = false;
-					showStatus("Article loaded. Render article...");
-					showArticle(r)
-				},
-
-				function(e) {
-					btn.disabled = false;
-					showStatus("Error loading article");
-					console.log(e)
-				}
-
-				);
-				
-			}
-
+			btn.onclick = loadArticle;
 			btn.disabled = false;
-						
 
 		}, true);
 
+		function loadArticle() {
+			document.getElementById("zimtest").disabled = true;
+			clearArticle();
+			showStatus("Loading article "
+					+ document.getElementById("articleTitle").value
+					+ " from file: "
+					+ document.getElementById("zimFileName").value);
+			var startTime = new Date().getTime();
+			window.plugins.directoryListing.zimtest(document
+					.getElementById("zimFileName").value, document
+					.getElementById("articleTitle").value,
+
+			function(r) {
+				document.getElementById("zimtest").disabled = false;
+				showStatus("Article loaded. Render article...");
+				var loadedTime = new Date().getTime();				
+				var loadTime = loadedTime - startTime;				
+				showArticle(r);
+				var end = new Date().getTime();
+				var renderTime = end - loadedTime;
+				showStatus("Article rendered. Load time: "+loadTime+"ms\n\t Render time: "+renderTime+" ms");
+				
+			},
+
+			function(e) {
+				document.getElementById("zimtest").disabled = false;
+				showStatus("Error loading article");
+				console.log(e)
+			}
+
+			);
+		}
+		
 		function printResult(fileInfo) {
 
 			var innerHtmlText = getHtml(fileInfo);
@@ -95,20 +104,19 @@
 			document.getElementById("result").innerHTML = innerHtmlText;
 
 		}
-		
+
 		function showStatus(status) {
 			document.getElementById("status").innerHTML = status;
 		}
-		
+
 		function clearArticle() {
 			document.getElementById("result").innerHTML = "";
 		}
 		function showArticle(articleText) {
-			
+
 			document.getElementById("result").innerHTML = articleText.articletext;
 
 		}
-
 
 		function getHtml(fileInfo) {
 
