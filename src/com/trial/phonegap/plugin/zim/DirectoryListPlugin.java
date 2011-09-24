@@ -31,7 +31,7 @@ public class DirectoryListPlugin extends Plugin {
 	/** List Action */
 
 	public static final String ACTION_LIST="list";
-	public static final String ACTION_ZIMTEST="zimtest";
+	public static final String ACTION_GETARTICLEDATA="getArticleData";
 
 	/*
 
@@ -71,12 +71,16 @@ public class DirectoryListPlugin extends Plugin {
 
 			}
 
-		} else if (ACTION_ZIMTEST.equals(action)) {
+		} else if (ACTION_GETARTICLEDATA.equals(action)) {
 			try {
 				String zimFileName = data.getString(0);
 				String articleTitle = data.getString(1);
 				
-				JSONObject articleData = zimTest(zimFileName,articleTitle);
+				String nameSpace = data.getString(2);
+				if (nameSpace.length()!=  1) {
+					throw new JSONException("nameSpace parameter is not a char");
+				}
+				JSONObject articleData = getArticleData(zimFileName,articleTitle,nameSpace.charAt(0));
 
 				Log.d("zimgap", "end of zimTest");
 
@@ -102,7 +106,7 @@ public class DirectoryListPlugin extends Plugin {
 
 		return result;
 	}
-	private JSONObject zimTest(String zimFileName, String articleTitle) throws JSONException {
+	private JSONObject getArticleData(String zimFileName, String articleTitle, char nameSpace) throws JSONException {
 		JSONObject articleData = new JSONObject();
         File zimFile = new File(zimFileName);
         Log.d("zimgap",""+zimFile.exists());
@@ -111,7 +115,7 @@ public class DirectoryListPlugin extends Plugin {
 		ZIMReader zReader = new ZIMReader(file);
 
 		try {
-			ByteArrayOutputStream articleDataByteArray = zReader.getArticleData(articleTitle,'A');
+			ByteArrayOutputStream articleDataByteArray = zReader.getArticleData(articleTitle,nameSpace);
 			if (articleDataByteArray==null) {
 				Log.w("zimgap", "Article \""+articleTitle+"\" not found");
 			} else {

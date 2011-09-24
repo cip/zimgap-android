@@ -72,9 +72,9 @@
 					+ " from file: "
 					+ document.getElementById("zimFileName").value);
 			var startTime = new Date().getTime();
-			window.plugins.directoryListing.zimtest(document
+			window.plugins.directoryListing.getArticleData(document
 					.getElementById("zimFileName").value, document
-					.getElementById("articleTitle").value,
+					.getElementById("articleTitle").value, "A",
 
 			function(r) {
 				document.getElementById("zimtest").disabled = false;

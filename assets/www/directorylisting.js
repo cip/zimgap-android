@@ -28,15 +28,15 @@ DirectoryListing.prototype.list = function(directory,successCallback, failureCal
 
 };
 
-DirectoryListing.prototype.zimtest = function(zimFileName, articleTitle,successCallback, failureCallback) {
+DirectoryListing.prototype.getArticleData = function(zimFileName, articleTitle, nameSpace, successCallback, failureCallback) {
 	return PhoneGap.exec(    successCallback,    //Success callback from the plugin
 
 	      failureCallback,     //Error callback from the plugin
 
 	      'DirectoryListPlugin',  //Tell PhoneGap to run "DirectoryListingPlugin" Plugin
 
-	      'zimtest',              //Tell plugin, which action we want to perform
-	      [zimFileName,articleTitle]);        //Passing list of args to the plugin
+	      'getArticleData',              //Tell plugin, which action we want to perform
+	      [zimFileName,articleTitle, nameSpace]);        //Passing list of args to the plugin
 
 	};
 
