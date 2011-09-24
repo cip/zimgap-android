@@ -8,6 +8,8 @@ import org.openzim.ZIMTypes.ZIMFile;
 import org.openzim.ZIMTypes.ZIMReader;
 
 import com.phonegap.*;
+
+import android.app.ActivityManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -16,8 +18,10 @@ public class DirectoryListingPhoneGapPluginActivity extends DroidGap {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);        
         Log.d("zimgap","Test");
+        Log.d("zimgap","memoryClass (MB): "+((ActivityManager) this.getSystemService( ACTIVITY_SERVICE )).getMemoryClass());
+        
         Log.d("zimgap",Environment.getExternalStorageDirectory().toString());
         File[] files = Environment.getExternalStorageDirectory().listFiles();
         for (int i=0;i<files.length;i++) {
@@ -47,6 +51,9 @@ public class DirectoryListingPhoneGapPluginActivity extends DroidGap {
          *  					- probably not supported with android browser
          *  					- probably slow 
          *  			b1) (see below) could perhaps work without plugin support. (start some thread which traverses all image tags and replace source with base64 encoded string
+         *  					Probably not feasible: Base64 encoded images added directly to index.html (400x533 px jpegs) Three images:ok
+         *  					Four images: application error. (A little strange, as not using that much memory neither)   	
+         *  		
          *  			Also  check how kiwix does it. (also combination javascript and native code)
          *  			Something  similar in qt: http://doc.qt.nokia.com/4.7/qtwebkit-bridge.html assignToHTMLImageElement		
          *  	With some plugin support. How? ContentProvider??? Save to local file system?

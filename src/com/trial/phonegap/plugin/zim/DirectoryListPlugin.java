@@ -74,8 +74,7 @@ public class DirectoryListPlugin extends Plugin {
 		} else if (ACTION_GETARTICLEDATA.equals(action)) {
 			try {
 				String zimFileName = data.getString(0);
-				String articleTitle = data.getString(1);
-				
+				String articleTitle = data.getString(1);				
 				String nameSpace = data.getString(2);
 				if (nameSpace.length()!=  1) {
 					throw new JSONException("nameSpace parameter is not a char");
@@ -119,9 +118,16 @@ public class DirectoryListPlugin extends Plugin {
 			if (articleDataByteArray==null) {
 				Log.w("zimgap", "Article \""+articleTitle+"\" not found");
 			} else {
-				String articleText =articleDataByteArray.toString("utf-8");
+				String articleText = null;
+				if (nameSpace=='A') {
+					articleText = articleDataByteArray.toString("utf-8");
+					
+				} else if (nameSpace=='I') {
+					articleText = Base64.encodeBytes(articleDataByteArray.toByteArray());					
+				} else {
+					throw new JSONException("nameSpace "+nameSpace+ " not supported.");
+				}
 				articleData.put("articletext", articleText);
-
 				Log.d("zimgap","Article read successfully");
 			}
 		} catch (IOException e) {
