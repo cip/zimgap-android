@@ -17,14 +17,12 @@
 		value="//sdcard/wikipedia-de.zim">-->
 	
 	<input id="articleTitle" name="articleTitle" type="text" value="Graz">
-	<input disabled id="list-sdcard" type="button"
-		value="List SDCard Contents" />
 	<input disabled id="loadarticle" type="button" value="Load article" />
 	<hr>
 	<div id="status"></div>
 	<hr>
 
-	<!-- Place Holder for placing the SD Card Listing -->
+	<!-- Place Holder for placing the article data -->
 
 	<div id="result"></div>
 
@@ -35,33 +33,9 @@
 	<script type="text/javascript">
 		var startTime;
 		document.addEventListener('deviceready', function() {
-
-			var btn = document.getElementById("list-sdcard");
-
-			btn.onclick = function() {
-				btn.disabled = true;
-				window.plugins.zim.list("/sdcard",
-
-				function(r) {
-					btn.disabled = false;
-					printResult(r)
-				},
-
-				function(e) {
-					btn.disabled = false;
-					console.log(e)
-				}
-
-				);
-
-			}
-
-			btn.disabled = false;
-
 			var btn = document.getElementById("loadarticle");
 			btn.onclick = loadArticle;
 			btn.disabled = false;
-
 		}, true);
 
 		function loadArticle() {

@@ -30,7 +30,6 @@ public class ZimPhoneGapPlugin extends Plugin {
 
 	/** List Action */
 
-	public static final String ACTION_LIST="list";
 	public static final String ACTION_GETARTICLEDATA="getArticleData";
 
 	/*
@@ -51,27 +50,7 @@ public class ZimPhoneGapPlugin extends Plugin {
 
 		PluginResult result = null;
 
-		if (ACTION_LIST.equals(action)) {
-
-			try {
-
-				String fileName = data.getString(0);
-
-				JSONObject fileInfo = getDirectoryListing(new File(fileName));
-
-				Log.d("zimgap", "Returning "+ fileInfo.toString());
-
-				result = new PluginResult(Status.OK, fileInfo);
-
-			} catch (JSONException jsonEx) {
-
-				Log.d("zimgap", "Got JSON Exception "+ jsonEx.getMessage());
-				
-				result = new PluginResult(Status.JSON_EXCEPTION);
-
-			}
-
-		} else if (ACTION_GETARTICLEDATA.equals(action)) {
+		if (ACTION_GETARTICLEDATA.equals(action)) {
 			try {
 				String zimFileName = data.getString(0);
 				String articleTitle = data.getString(1);
@@ -130,45 +109,4 @@ public class ZimPhoneGapPlugin extends Plugin {
 
 		return articleData;		
 	}
-	/**
-
-	 * Gets the Directory listing for file, in JSON format
-
-	 * @param file The file for which we want to do directory listing
-
-	 * @return JSONObject representation of directory list. 
-	 *  e.g {"filename":"/sdcard","isdir":true,"children":[{"filename":"a.txt","isdir":false},{..}]}
-
-	 * @throws JSONException
-
-	 */
-
-	private JSONObject getDirectoryListing(File file) throws JSONException {
-		//For now find zim files in root directory of sdcard only
-		JSONObject fileInfo = new JSONObject();
-	
-		if (file.isDirectory()) {
-			fileInfo.put("filename", file.getAbsolutePath());			
-			fileInfo.put("isdir", file.isDirectory());	
-			
-			JSONArray children = new JSONArray();
-			fileInfo.put("children", children);
-			if (null != file.listFiles()) {
-				for (File child : file.listFiles()) {
-					if (child.isFile()) {
-						if (child.getName().endsWith(".zim") || child.getName().endsWith(".zima")) {
-							JSONObject zimFileInfo = new JSONObject();							
-							Log.d("zimgap"," Found zimfile: "+child.getName());		        
-							zimFileInfo.put("filename", child.getAbsolutePath());			
-							zimFileInfo.put("isdir", child.isDirectory());
-							children.put(zimFileInfo);
-						}
-					}
-				}
-			}
-		}
-		return fileInfo;
-
-	}
-
 }
