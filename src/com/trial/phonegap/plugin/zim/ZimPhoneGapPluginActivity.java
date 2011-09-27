@@ -12,7 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 
-public class DirectoryListingPhoneGapPluginActivity extends DroidGap {
+public class ZimPhoneGapPluginActivity extends DroidGap {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {

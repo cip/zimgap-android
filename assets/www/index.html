@@ -19,7 +19,7 @@
 	<input id="articleTitle" name="articleTitle" type="text" value="Graz">
 	<input disabled id="list-sdcard" type="button"
 		value="List SDCard Contents" />
-	<input disabled id="zimtest" type="button" value="zimtest" />
+	<input disabled id="loadarticle" type="button" value="Load article" />
 	<hr>
 	<div id="status"></div>
 	<hr>
@@ -31,7 +31,7 @@
 
 	<script type="text/javascript" src="phonegap-1.0.0.js"></script>
 
-	<script type="text/javascript" src="directorylisting.js"></script>
+	<script type="text/javascript" src="zim.js"></script>
 	<script type="text/javascript">
 		var startTime;
 		document.addEventListener('deviceready', function() {
@@ -40,7 +40,7 @@
 
 			btn.onclick = function() {
 				btn.disabled = true;
-				window.plugins.directoryListing.list("/sdcard",
+				window.plugins.zim.list("/sdcard",
 
 				function(r) {
 					btn.disabled = false;
@@ -58,26 +58,26 @@
 
 			btn.disabled = false;
 
-			var btn = document.getElementById("zimtest");
+			var btn = document.getElementById("loadarticle");
 			btn.onclick = loadArticle;
 			btn.disabled = false;
 
 		}, true);
 
 		function loadArticle() {
-			document.getElementById("zimtest").disabled = true;
+			document.getElementById("loadarticle").disabled = true;
 			clearArticle();
 			showStatus("Loading article "
 					+ document.getElementById("articleTitle").value
 					+ " from file: "
 					+ document.getElementById("zimFileName").value);
 			var startTime = new Date().getTime();
-			window.plugins.directoryListing.getArticleData(document
+			window.plugins.zim.getArticleData(document
 					.getElementById("zimFileName").value, document
 					.getElementById("articleTitle").value, "A",
 
 			function(r) {
-				document.getElementById("zimtest").disabled = false;
+				document.getElementById("loadarticle").disabled = false;
 				showStatus("Article loaded. Render article...");
 				var loadedTime = new Date().getTime();				
 				var loadTime = loadedTime - startTime;				
@@ -89,7 +89,7 @@
 			},
 
 			function(e) {
-				document.getElementById("zimtest").disabled = false;
+				document.getElementById("loadarticle").disabled = false;
 				showStatus("Error loading article");
 				console.log(e)
 			}

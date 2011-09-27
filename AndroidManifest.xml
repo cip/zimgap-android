@@ -26,7 +26,7 @@ android:anyDensity="true"
     <uses-sdk android:minSdkVersion="7" />
 
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="true">
-        <activity android:name="com.trial.phonegap.plugin.zim.DirectoryListingPhoneGapPluginActivity"
+        <activity android:name=".ZimPhoneGapPluginActivity"
                   android:label="@string/app_name" android:configChanges="orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -26,7 +26,7 @@ import com.phonegap.api.PluginResult.Status;
  * @author Christian
  *
  */
-public class DirectoryListPlugin extends Plugin {
+public class ZimPhoneGapPlugin extends Plugin {
 
 	/** List Action */
 

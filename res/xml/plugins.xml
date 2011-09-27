@@ -16,6 +16,6 @@
     <plugin name="Temperature" value="com.phonegap.TempListener"/>
     <plugin name="FileTransfer" value="com.phonegap.FileTransfer"/>
     <plugin name="Capture" value="com.phonegap.Capture"/>
-    <plugin name="DirectoryListPlugin" value="com.trial.phonegap.plugin.zim.DirectoryListPlugin" />
+    <plugin name="ZimPhoneGapPlugin" value="com.trial.phonegap.plugin.zim.ZimPhoneGapPlugin" />
  
 </plugins>
