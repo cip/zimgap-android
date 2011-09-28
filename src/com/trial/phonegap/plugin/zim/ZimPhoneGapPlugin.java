@@ -60,7 +60,9 @@ public class ZimPhoneGapPlugin extends Plugin {
 					throw new JSONException("nameSpace parameter is not a char");
 				}
 				JSONObject articleData = getArticleData(zimFileName,articleTitle,nameSpace.charAt(0));
-
+				if (articleData.isNull("articletext")) {
+					throw new JSONException("Article "+articleTitle+ " not found in namespace "+ nameSpace + " in file "+zimFileName);
+				}
 				Log.d("zimgap", "end of zimTest");
 
 				result = new PluginResult(Status.OK, articleData);
@@ -93,15 +95,27 @@ public class ZimPhoneGapPlugin extends Plugin {
 		// Associate the Zim File with a Reader
 		ZIMReader zReader = new ZIMReader(file);
 
+		//FIXME: For now just remove baseuri when loading images.  
+		articleTitle = articleTitle.replaceFirst("file:///I/","");
+		
 		try {
 			ByteArrayOutputStream articleDataByteArray = zReader.getArticleData(articleTitle,nameSpace);
 			if (articleDataByteArray==null) {
 				Log.w("zimgap", "Article \""+articleTitle+"\" not found");
 			} else {
-				String articleText =articleDataByteArray.toString("utf-8");
+				String articleText = null;
+				if (nameSpace=='A') {
+					articleText = articleDataByteArray.toString("utf-8");									
+				} else if (nameSpace=='I') {
+					//FIXME: don't hardcode image type
+					articleText = "data:image/jpg;base64,".concat(Base64.encodeBytes(articleDataByteArray.toByteArray()));					
+				} else {
+					throw new JSONException("nameSpace "+nameSpace+ " not supported.");
+				}
 				articleData.put("articletext", articleText);
-
-				Log.d("zimgap","Article read successfully");
+				articleData.put("articletitle", articleTitle);
+				//Working: articleData.put("articletext", "data:image/gif;base64,R0lGODlhUAAPAKIAAAsLav///88PD9WqsYmApmZmZtZfYmdakyH5BAQUAP8ALAAAAABQAA8AAAPbWLrc/jDKSVe4OOvNu/9gqARDSRBHegyGMahqO4R0bQcjIQ8E4BMCQc930JluyGRmdAAcdiigMLVrApTYWy5FKM1IQe+Mp+L4rphz+qIOBAUYeCY4p2tGrJZeH9y79mZsawFoaIRxF3JyiYxuHiMGb5KTkpFvZj4ZbYeCiXaOiKBwnxh4fnt9e3ktgZyHhrChinONs3cFAShFF2JhvCZlG5uchYNun5eedRxMAF15XEFRXgZWWdciuM8GCmdSQ84lLQfY5R14wDB5Lyon4ubwS7jx9NcV9/j5+g4JADs=");	
+				Log.d("zimgap","Article \""+articleTitle+"\" read successfully");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

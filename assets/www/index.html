@@ -12,7 +12,7 @@
 
 	<!-- Button -->
 	<input id="zimFileName" name="articleTitle" type="text"
-		value="//sdcard/wikipedia-de.zim">
+		value="//sdcard/graz.zim">
 	<!-- Doesn't work (appearantly not supported by android browser)   <input id="zimFileName" name="articleTitle" type="file"
 		value="//sdcard/wikipedia-de.zim">-->
 	
@@ -24,9 +24,15 @@
 
 	<!-- Place Holder for placing the article data -->
 
-	<div id="result"></div>
-
-
+	
+	<div id="result">
+	<!-- <img src="img2" alt="British Blog Directory"/>-->
+	<!--  FIXME I/ not working (Check how real url looks like) -->
+	<img src="/I/d3148f9ea2878f1a399f717309671187ee70739b"/>
+	<img src="/I/796c8c8774fa1a72f8bce68810b7e95479effa91"/>
+	
+	</div>
+	
 	<script type="text/javascript" src="phonegap-1.0.0.js"></script>
 
 	<script type="text/javascript" src="zim.js"></script>
@@ -36,8 +42,64 @@
 			var btn = document.getElementById("loadarticle");
 			btn.onclick = loadArticle;
 			btn.disabled = false;
+			console.log("event deviceready processed");
+			//printTags('img');
+			loadImagesFromZimFile();			
 		}, true);
 
+		function printTags(tag) {
+			console.log("in printImageTags("+tag+")");			
+			imgs=document.getElementsByTagName(tag);
+			 for(i in imgs)
+			  {
+				 console.log(imgs[i]);
+				 console.log("Replace image src ("+imgs[i].src+") with dataurl");
+				 imgs[i].src=imgs[0].src;
+			  }
+			
+		}
+		
+		function loadImagesFromZimFile() {
+			console.log("loadImagesFromZimFile()");			
+			imgs=document.getElementsByTagName('img');
+			 for(i in imgs) //TODO why zero images on device?
+			  {
+				//if (imgs[i]) {
+				if (i<5) { //FIXME: for now only load a few images 
+					console.log("Load image ("+imgs[i].src+") from zimfile");
+				 	window.plugins.zim.getArticleData(document.getElementById("zimFileName").value, 
+				 			imgs[i].src, "I",
+
+			function(r) {				 		
+				console.log("Image "+r.articletitle+ " loaded. Find image element...");						
+				var imgs=document.getElementsByTagName('img');
+				 for(i in imgs)
+				 {
+					 var re = new RegExp(r.articletitle);
+				  if(re.test(imgs[i].src))
+				   {
+				    	console.log("found image element ("+imgs[i].src+").Assign as dataurl");
+				    	imgs[i].src=r.articletext;
+				   } else {
+					   console.log("Image element ("+imgs[i].src+") is not loaded image. Inspect next element");
+				   }
+				}
+				
+				//imgs[0].src=r.articletext;
+				console.log("r: "+r.articletext);
+				console.log("hardcoded: "+"data:image/gif;base64,R0lGODlhUAAPAKIAAAsLav///88PD9WqsYmApmZmZtZfYmdakyH5BAQUAP8ALAAAAABQAA8AAAPbWLrc/jDKSVe4OOvNu/9gqARDSRBHegyGMahqO4R0bQcjIQ8E4BMCQc930JluyGRmdAAcdiigMLVrApTYWy5FKM1IQe+Mp+L4rphz+qIOBAUYeCY4p2tGrJZeH9y79mZsawFoaIRxF3JyiYxuHiMGb5KTkpFvZj4ZbYeCiXaOiKBwnxh4fnt9e3ktgZyHhrChinONs3cFAShFF2JhvCZlG5uchYNun5eedRxMAF15XEFRXgZWWdciuM8GCmdSQ84lLQfY5R14wDB5Lyon4ubwS7jx9NcV9/j5+g4JADs=");
+				//Working imgs[0].src="data:image/gif;base64,R0lGODlhUAAPAKIAAAsLav///88PD9WqsYmApmZmZtZfYmdakyH5BAQUAP8ALAAAAABQAA8AAAPbWLrc/jDKSVe4OOvNu/9gqARDSRBHegyGMahqO4R0bQcjIQ8E4BMCQc930JluyGRmdAAcdiigMLVrApTYWy5FKM1IQe+Mp+L4rphz+qIOBAUYeCY4p2tGrJZeH9y79mZsawFoaIRxF3JyiYxuHiMGb5KTkpFvZj4ZbYeCiXaOiKBwnxh4fnt9e3ktgZyHhrChinONs3cFAShFF2JhvCZlG5uchYNun5eedRxMAF15XEFRXgZWWdciuM8GCmdSQ84lLQfY5R14wDB5Lyon4ubwS7jx9NcV9/j5+g4JADs=";
+			},
+
+			function(e) {
+				console.log("Error loading image"+e);
+			}
+
+			);
+					}
+			}			 
+		}
+		
 		function loadArticle() {
 			document.getElementById("loadarticle").disabled = true;
 			clearArticle();
@@ -58,6 +120,7 @@
 				showArticle(r);
 				var end = new Date().getTime();
 				var renderTime = end - loadedTime;
+				loadImagesFromZimFile();
 				showStatus("Article rendered. Load time: "+loadTime+"ms\n\t Render time: "+renderTime+" ms");
 				
 			},
