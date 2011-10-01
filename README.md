@@ -22,13 +22,9 @@ Definitely better reuse and less effort, but feasibility very questionable. Vari
     probably slow 
 2. Replace image links with data urls 
 	(See also 2. below)
-	 Could perhaps work without plugin support:
-	 start some thread which traverses all image tags and replace source with base64 encoded string     
-     Probably not feasible: 
-     Test case (On Orange Boston): Base64 encoded images added directly to index.html (400x533 px jpegs) Three images:ok
-     Four images: application error. (A little strange, as not using that much memory neither) 	   				
-     May be worth repeating on other mobile phone.      			
-
+	 Works without plugin support:
+	 start some thread which traverses all image tags and replace source with base64 encoded string    
+   Currently implemented. Not working that bad.     
 #### With plugin support
 
 1. contentprovider
@@ -82,12 +78,33 @@ Potential solutions:
 	Test phone is pretty low end, uses old android version (Eclair) without a just-in-timer 
 compiler. Newer android versions should be faster. However,  rather something like 400% boost to expected,
            			which would not be enough.
-2. Use native lib. 
+2. Reduce cluster size in zim files.
+	
+	Would reduce compression rate as well. 
+	
+3. Use native lib. 
 
 	Extra effort (not available right now, but in particular much worse maintenance)  
 	Could use native zimlib (Perhaps porting not that much effort as newer ndks (>= dec 2010) apparently support stl.
-	Other variant is to only use native xz-library (or even only some parts of it)	
-  	
+	Other variant is to only use native xz-library (or even only some parts of it)
+
+Note that performance is not only related to loading of article from zim file: 
+
+For example on orange boston load of Graz/wikipedia-de.zim:
+
+```
+Load time 21260 ms
+	 readfrom zim 17.4 s
+	 toString 0.2 s
+	 PluginResult(=JSON encoding) 0.9 s
+	 Other (javascript?)  ~ 3.7 s
+Render time 485 ms 
+```  	
+
+Native readfrom zim should be in range of 200 ms. Therefore at least for newer mobiles phones,
+expected that acceptable article load time can be reached. TODO confirm on Galaxy S.
+ 
+ 
 ### Open links
 Not exactly unsolvable, but still needs to be decided how to handle this:        
 
