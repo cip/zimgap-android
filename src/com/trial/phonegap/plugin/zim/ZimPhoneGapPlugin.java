@@ -63,9 +63,10 @@ public class ZimPhoneGapPlugin extends Plugin {
 				if (articleData.isNull("articletext")) {
 					throw new JSONException("Article "+articleTitle+ " not found in namespace "+ nameSpace + " in file "+zimFileName);
 				}
-				Log.d("zimgap", "end of zimTest");
+				Log.d("zimgap", "article loaded");			
 
 				result = new PluginResult(Status.OK, articleData);
+				Log.d("zimgap", "PluginResult finished");
 
 			}  catch (JSONException jsonEx) {
 
@@ -90,7 +91,6 @@ public class ZimPhoneGapPlugin extends Plugin {
 	private JSONObject getArticleData(String zimFileName, String articleTitle, char nameSpace) throws JSONException {
 		JSONObject articleData = new JSONObject();
         File zimFile = new File(zimFileName);
-        Log.d("zimgap",""+zimFile.exists());
         ZIMFile file = new ZIMFile(zimFileName);
 		// Associate the Zim File with a Reader
 		ZIMReader zReader = new ZIMReader(file);
@@ -99,16 +99,20 @@ public class ZimPhoneGapPlugin extends Plugin {
 		articleTitle = articleTitle.replaceFirst("file:///I/","");
 		
 		try {
+			
 			ByteArrayOutputStream articleDataByteArray = zReader.getArticleData(articleTitle,nameSpace);
+			Log.d("zimgap","zReader.getArticleData(articleTitle,nameSpace) done");
 			if (articleDataByteArray==null) {
 				Log.w("zimgap", "Article \""+articleTitle+"\" not found");
 			} else {
 				String articleText = null;
 				if (nameSpace=='A') {
-					articleText = articleDataByteArray.toString("utf-8");									
+					articleText = articleDataByteArray.toString("utf-8");
+					Log.d("zimgap","articleDataByteArray.toString(\"utf-8\") done");
 				} else if (nameSpace=='I') {
 					//FIXME: don't hardcode image type
-					articleText = "data:image/jpg;base64,".concat(Base64.encodeBytes(articleDataByteArray.toByteArray()));					
+					articleText = "data:image/jpg;base64,".concat(Base64.encodeBytes(articleDataByteArray.toByteArray()));
+					Log.d("zimgap","base64 encoding done");
 				} else {
 					throw new JSONException("nameSpace "+nameSpace+ " not supported.");
 				}
