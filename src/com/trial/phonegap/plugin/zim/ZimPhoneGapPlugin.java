@@ -127,4 +127,9 @@ public class ZimPhoneGapPlugin extends Plugin {
 
 		return articleData;		
 	}
+	
+	public boolean onOverrideUrlLoading(String url) {
+		Log.d("zimgap","onOverrideUrlLoading: Url: "+url);
+		return true;
+    }
 }

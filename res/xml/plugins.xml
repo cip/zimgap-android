@@ -16,6 +16,7 @@
     <plugin name="Temperature" value="com.phonegap.TempListener"/>
     <plugin name="FileTransfer" value="com.phonegap.FileTransfer"/>
     <plugin name="Capture" value="com.phonegap.Capture"/>
-    <plugin name="ZimPhoneGapPlugin" value="com.trial.phonegap.plugin.zim.ZimPhoneGapPlugin" />
+    <plugin name="ZimPhoneGapPlugin" value="com.trial.phonegap.plugin.zim.ZimPhoneGapPlugin"  />
+    <url-filter value=""/>
  
 </plugins>
